@@ -1,16 +1,17 @@
 package number
 
 import (
-	"fmt"
 	"math"
 	"strconv"
 )
 
 // NumberFormat 千分位格式化数字
 func NumberFormat(number float64, thousandSep string) string {
-	number = Round(number)
-	str := strconv.FormatInt(int64(number), 10)
-	fmt.Println(str)
+	return NumberFormatInt(int64(Round(number)), thousandSep)
+}
+
+func NumberFormatInt(number int64, thousandSep string) string {
+	str := strconv.FormatInt(number, 10)
 	nl := len(str)
 	tl := len(thousandSep)
 	rl := nl + (nl-1)/3*tl
@@ -19,7 +20,6 @@ func NumberFormat(number float64, thousandSep string) string {
 		return str
 	}
 
-	fmt.Println(rl)
 	count := 0
 	for i, j := nl-1, rl-1; i >= 0; i, j = i-1, j-1 {
 		b[j] = str[i]
