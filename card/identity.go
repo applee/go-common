@@ -2,6 +2,7 @@ package card
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strconv"
 	"time"
@@ -55,7 +56,7 @@ func (i *IdentityCard) CalcAge() (age int) {
 	}
 	now := time.Now()
 	age = now.Year() - birthday.Year()
-	if birthday.Month() > now.Month() || (birthday.Month() == now.Month() && birthday.Day() < now.Day()) {
+	if age > 1 && (birthday.Month() > now.Month() || (birthday.Month() == now.Month() && birthday.Day() < now.Day())) {
 		age--
 	}
 	return
@@ -98,7 +99,7 @@ func (i *IdentityCard) ValidateProvince() (ok bool, err error) {
 func (i *IdentityCard) ValidateAge() (ok bool, err error) {
 	age := i.CalcAge()
 	if age < 0 || age > AGE_MAX {
-		return false, errors.New(ERR_IDENTITY_AGE_INVALID)
+		return false, fmt.Errorf(ERR_IDENTITY_AGE_INVALID, AGE_MAX)
 	}
 	return true, nil
 }
