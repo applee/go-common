@@ -1,4 +1,4 @@
-package container
+package cmap
 
 import (
 	"encoding/json"
