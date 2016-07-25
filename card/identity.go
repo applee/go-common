@@ -56,7 +56,7 @@ func (i *IdentityCard) CalcAge() (age int) {
 	}
 	now := time.Now()
 	age = now.Year() - birthday.Year()
-	if age > 1 && (birthday.Month() > now.Month() || (birthday.Month() == now.Month() && birthday.Day() < now.Day())) {
+	if age > 1 && (birthday.Month() > now.Month() || (birthday.Month() == now.Month() && birthday.Day() > now.Day())) {
 		age--
 	}
 	return
