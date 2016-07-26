@@ -2,6 +2,7 @@ package card
 
 import (
 	"testing"
+	"time"
 )
 
 func Test_IdentitySingle(t *testing.T) {
@@ -10,7 +11,8 @@ func Test_IdentitySingle(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("年龄：%d", i.CalcAge())
+	start, _ := time.Parse("2006-01-02", "2015-04-08")
+	t.Logf("年龄：%d", i.CalcAge(&start))
 	t.Logf("校验码：%+q", i.CalcChecksum())
 	t.Logf("归属地：%s", i.GetAddress())
 	ok, err := i.Validate()

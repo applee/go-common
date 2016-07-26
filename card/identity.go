@@ -17,6 +17,7 @@ const (
 	ERR_IDENTITY_CHECKSUM_INVALID = "身份证校验位不正确"
 )
 
+//IdentityCard 身份证对象
 type IdentityCard struct {
 	Original string //原始
 	Address  string //地址
@@ -25,6 +26,7 @@ type IdentityCard struct {
 	Checksum byte   //校验码
 }
 
+//NewIdentityCard 新建对象
 func NewIdentityCard(s string) (*IdentityCard, error) {
 	e := regexp.MustCompile("(^\\d{15}$)|(^\\d{17}(\\d|X|x)$)")
 	if !e.Match([]byte(s)) {
@@ -48,13 +50,16 @@ func NewIdentityCard(s string) (*IdentityCard, error) {
 	return i, nil
 }
 
-//计算年龄
-func (i *IdentityCard) CalcAge() (age int) {
+//CalcAge 计算年龄
+func (i *IdentityCard) CalcAge(t *time.Time) (age int) {
 	birthday, err := time.Parse("20060102", i.Birthday)
 	if err != nil {
 		return -1
 	}
 	now := time.Now()
+	if t != nil {
+		now = *t
+	}
 	age = now.Year() - birthday.Year()
 	if age > 1 && (birthday.Month() > now.Month() || (birthday.Month() == now.Month() && birthday.Day() > now.Day())) {
 		age--
@@ -62,7 +67,7 @@ func (i *IdentityCard) CalcAge() (age int) {
 	return
 }
 
-//计算验证码
+//CalcChecksum 计算验证码
 func (i *IdentityCard) CalcChecksum() byte {
 	var sum int
 	s := i.Original
@@ -75,7 +80,7 @@ func (i *IdentityCard) CalcChecksum() byte {
 	return IdentifyChecksums[sum%11]
 }
 
-//验证
+//Validate 验证
 func (i *IdentityCard) Validate() (ok bool, err error) {
 	ok, err = i.ValidateProvince()
 	if !ok {
@@ -89,22 +94,22 @@ func (i *IdentityCard) Validate() (ok bool, err error) {
 	return
 }
 
-//验证省份
+//ValidateProvince 验证省份
 func (i *IdentityCard) ValidateProvince() (ok bool, err error) {
 	_, ok = IdentityCardProvince[i.Address[:2]]
 	return
 }
 
-//验证年龄
+//ValidateAge 验证年龄
 func (i *IdentityCard) ValidateAge() (ok bool, err error) {
-	age := i.CalcAge()
+	age := i.CalcAge(nil)
 	if age < 0 || age > AGE_MAX {
 		return false, fmt.Errorf(ERR_IDENTITY_AGE_INVALID, AGE_MAX)
 	}
 	return true, nil
 }
 
-//验证校验码
+//ValidateChecksum 验证校验码
 func (i *IdentityCard) ValidateChecksum() (bool, error) {
 	if i.CalcChecksum() != i.Checksum {
 		return false, errors.New(ERR_IDENTITY_CHECKSUM_INVALID)
@@ -112,7 +117,7 @@ func (i *IdentityCard) ValidateChecksum() (bool, error) {
 	return true, nil
 }
 
-//归属地
+//GetAddress 获取身份证归属地
 func (i *IdentityCard) GetAddress() string {
 	province := IdentityCardProvince[i.Address[:2]]
 	cityCode, _ := strconv.Atoi(i.Address[:6])
