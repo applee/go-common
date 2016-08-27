@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-//IsFileExists 目录或文件是否存在
-func IsFileExists(path string) (bool, error) {
+//IsExists 目录或文件是否存在
+func IsExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -27,8 +27,8 @@ func IsFile(path string) (bool, error) {
 	return info.Mode().IsRegular(), nil
 }
 
-//CopyFile 文件拷贝,优先使用hard link
-func CopyFile(src, dest string) (err error) {
+//Copy 文件拷贝,优先使用hard link
+func Copy(src, dest string) (err error) {
 	srcInfo, err := os.Stat(src)
 	if err != nil {
 		return
@@ -52,12 +52,12 @@ func CopyFile(src, dest string) (err error) {
 	if err = os.Link(src, dest); err == nil {
 		return
 	}
-	err = CopyFileContents(src, dest)
+	err = CopyContents(src, dest)
 	return
 }
 
 //CopyFileContents 文件内容拷贝
-func CopyFileContents(src, dest string) (err error) {
+func CopyContents(src, dest string) (err error) {
 	in, err := os.Open(src)
 	if err != nil {
 		return
