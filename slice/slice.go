@@ -31,8 +31,32 @@ func DiffString(slice1, slice2 []string) []string {
 	return diff
 }
 
-func RemoveDuplicatesDisorder() {
+// RemoveDuplicatesInt removes the duplicated element from the slice.
+func RemoveDuplicatesInt(s *[]int) {
+	found := make(map[int]bool)
+	j := 0
+	for i, x := range *s {
+		if !found[x] {
+			found[x] = true
+			(*s)[j] = (*s)[i]
+			j++
+		}
+	}
+	*s = (*s)[:j]
+}
 
+// RemoveDuplicatesString removes the duplicated element from the slice.
+func RemoveDuplicatesString(s *[]string) {
+	found := make(map[string]bool)
+	j := 0
+	for i, x := range *s {
+		if !found[x] {
+			found[x] = true
+			(*s)[j] = (*s)[i]
+			j++
+		}
+	}
+	*s = (*s)[:j]
 }
 
 // RemoveIntUnordered returns the unordered remaining slice after getting rid
@@ -105,4 +129,42 @@ loop:
 		i++
 	}
 	return d.Slice(0, m).Interface(), nil
+}
+
+// Contains return the whether the obj is in target
+func Contains(obj interface{}, target interface{}) (bool, error) {
+	targetValue := reflect.ValueOf(target)
+	switch reflect.TypeOf(target).Kind() {
+	case reflect.Slice, reflect.Array:
+		for i := 0; i < targetValue.Len(); i++ {
+			if targetValue.Index(i).Interface() == obj {
+				return true, nil
+			}
+		}
+	case reflect.Map:
+		if targetValue.MapIndex(reflect.ValueOf(obj)).IsValid() {
+			return true, nil
+		}
+	}
+	return false, errors.New("not in")
+}
+
+// ContainsInt returns wether the obj is in the target.
+func ContainsInt(obj int, target []int) bool {
+	for _, v := range target {
+		if v == obj {
+			return true
+		}
+	}
+	return false
+}
+
+// ContainsString returns wether the obj is in the target.
+func ContainsString(obj string, target []string) bool {
+	for _, v := range target {
+		if v == obj {
+			return true
+		}
+	}
+	return false
 }
