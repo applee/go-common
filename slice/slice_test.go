@@ -5,6 +5,7 @@ import "reflect"
 import "sort"
 
 func TestRemoveDisorder(t *testing.T) {
+
 	a := []string{"1", "2", "3", "4", "5"}
 	b := []string{"1", "2"}
 	excepted := []string{"3", "4", "5"}
