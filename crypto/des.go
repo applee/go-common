@@ -1,10 +1,10 @@
-package crypt
+package crypto
 
 import (
 	"crypto/cipher"
 	"crypto/des"
 
-	"github.com/applee/go-common/crypt/padding"
+	"github.com/applee/go-common/crypto/padding"
 )
 
 func DesEncrypt(origData, key []byte) ([]byte, error) {
