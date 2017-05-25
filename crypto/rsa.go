@@ -103,14 +103,10 @@ func MarshalPKCS8PrivateKey(key *rsa.PrivateKey) ([]byte, error) {
 }
 
 // 私钥加密
-func RsaEncryptPrivate(origData, privKey []byte, privKeyFormat int) (
+func RsaEncryptPrivate(origData []byte, privKey *rsa.PrivateKey) (
 	[]byte, error) {
-	priv, err := GetPrivKey(privKey, privKeyFormat)
-	if err != nil {
-		return nil, err
-	}
 	tLen := len(origData)
-	k := (priv.N.BitLen() + 7) / 8
+	k := (privKey.N.BitLen() + 7) / 8
 	if k < tLen+11 {
 		return nil, rsa.ErrMessageTooLong
 	}
@@ -121,7 +117,7 @@ func RsaEncryptPrivate(origData, privKey []byte, privKeyFormat int) (
 	}
 	copy(em[k-tLen:k], origData)
 	m := new(big.Int).SetBytes(em)
-	c, err := decrypt(rand.Reader, priv, m)
+	c, err := decrypt(rand.Reader, privKey, m)
 	if err != nil {
 		return nil, err
 	}
@@ -130,20 +126,16 @@ func RsaEncryptPrivate(origData, privKey []byte, privKeyFormat int) (
 }
 
 // 公钥解密
-func RsaDecryptPublic(origData, pubKey []byte) ([]byte, error) {
-	pub, err := GetPubKey(pubKey)
-	if err != nil {
-		return nil, err
-	}
-	k := (pub.N.BitLen() + 7) / 8
+func RsaDecryptPublic(origData []byte, pubKey *rsa.PublicKey) ([]byte, error) {
+	k := (pubKey.N.BitLen() + 7) / 8
 	if k != len(origData) {
 		return nil, rsa.ErrVerification
 	}
 	m := new(big.Int).SetBytes(origData)
-	if m.Cmp(pub.N) > 0 {
+	if m.Cmp(pubKey.N) > 0 {
 		return nil, rsa.ErrVerification
 	}
-	m.Exp(m, big.NewInt(int64(pub.E)), pub.N)
+	m.Exp(m, big.NewInt(int64(pubKey.E)), pubKey.N)
 
 	d := leftPad(m.Bytes(), k)
 
