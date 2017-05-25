@@ -159,3 +159,13 @@ func ContainsString(obj string, target []string) bool {
 	}
 	return false
 }
+
+// Index returns the obj index in user-defined data type.
+func Index(limit int, predicate func(i int) bool) int {
+	for i := 0; i < limit; i++ {
+		if predicate(i) {
+			return i
+		}
+	}
+	return -1
+}
