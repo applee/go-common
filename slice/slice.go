@@ -5,26 +5,47 @@ import (
 	"reflect"
 )
 
-// DiffString returns the subtraction of tow string slices
-func DiffString(slice1, slice2 []string) []string {
+// DiffString returns the subtraction of tow string slices whtich in a
+// but not in b
+func DiffString(a, b []string) []string {
+	var diff []string
+
+	for _, x := range a {
+		found := false
+		for _, y := range b {
+			if x == y {
+				found = true
+				break
+			}
+		}
+		if !found {
+			diff = append(diff, x)
+		}
+	}
+
+	return diff
+}
+
+// AbsDiffString returns the absolute subtraction of tow string slices
+func AbsDiffString(a, b []string) []string {
 	var diff []string
 
 	for i := 0; i < 2; i++ {
-		for _, s1 := range slice1 {
+		for _, x := range a {
 			found := false
-			for _, s2 := range slice2 {
-				if s1 == s2 {
+			for _, y := range b {
+				if x == y {
 					found = true
 					break
 				}
 			}
 			if !found {
-				diff = append(diff, s1)
+				diff = append(diff, x)
 			}
 		}
 
 		if i == 0 {
-			slice1, slice2 = slice2, slice1
+			a, b = b, a
 		}
 	}
 
