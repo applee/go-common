@@ -20,7 +20,6 @@ func AesEncrypt(origData, key []byte) (crypted []byte, err error) {
 	}
 	blockSize := block.BlockSize()
 	origData = padding.PKCS7.Padding(origData, blockSize)
-	fmt.Println(origData)
 	blockMode := cipher.NewCBCEncrypter(block, key[:blockSize])
 	crypted = make([]byte, len(origData))
 	blockMode.CryptBlocks(crypted, origData)
