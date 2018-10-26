@@ -1,16 +1,13 @@
 package number
 
 import (
-	"math"
 	"strconv"
+
+	"github.com/applee/go-common/strings"
 )
 
-// NumberFormat 千分位格式化数字
-func NumberFormat(number float64, thousandSep string) string {
-	return NumberFormatInt(int64(Round(number)), thousandSep)
-}
-
-func NumberFormatInt(number int64, thousandSep string) string {
+// Format formats the integer number with the thousands separator for display.
+func Format(number int64, thousandSep string) string {
 	str := strconv.FormatInt(number, 10)
 	nl := len(str)
 	tl := len(thousandSep)
@@ -29,13 +26,5 @@ func NumberFormatInt(number int64, thousandSep string) string {
 			j -= tl
 		}
 	}
-	return string(b)
-}
-
-// Round 四舍五入
-func Round(a float64) float64 {
-	if a < 0 {
-		return math.Ceil(a - 0.5)
-	}
-	return math.Floor(a + 0.5)
+	return strings.FromBytes(b)
 }

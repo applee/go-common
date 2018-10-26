@@ -127,7 +127,7 @@ func RemoveUnordered(data, remove interface{}) (interface{}, error) {
 	d := reflect.ValueOf(data)
 	r := reflect.ValueOf(remove)
 	if d.Type().Kind() != reflect.Slice || r.Type().Kind() != reflect.Slice {
-		return nil, errors.New("Invalid type.")
+		return nil, errors.New("invalid type")
 	}
 
 	var (
@@ -152,6 +152,7 @@ loop:
 	return d.Slice(0, m).Interface(), nil
 }
 
+// Contains returns wether the given obj is in the targe.
 func Contains(obj interface{}, target []interface{}) bool {
 	for _, v := range target {
 		if v == obj {
@@ -161,7 +162,7 @@ func Contains(obj interface{}, target []interface{}) bool {
 	return false
 }
 
-// ContainsInt returns wether the obj is in the target.
+// ContainsInt returns wether the given integer is in the target slice.
 func ContainsInt(obj int, target []int) bool {
 	for _, v := range target {
 		if v == obj {

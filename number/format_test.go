@@ -4,17 +4,20 @@ import (
 	"testing"
 )
 
-func Test_FormatNumber(t *testing.T) {
-	a := -10.5
-	t.Log(Round(a))
-	b := 11.2
-	t.Log(Round(b))
-	c := 1.8
-	t.Log(Round(c))
-
-	d := 123456.22
-	t.Log(NumberFormat(d, ","))
-
-	e := 12345678.567
-	t.Log(NumberFormat(e, ","))
+func TestFormat(t *testing.T) {
+	cases := []struct {
+		num int64
+		fmt string
+	}{
+		{123, "123"},
+		{1234, "1,234"},
+		{123456, "123,456"},
+	}
+	for i := range cases {
+		got := Format(cases[i].num, ",")
+		if got != cases[i].fmt {
+			t.Fatalf("%d after Round want %s, got %s",
+				cases[i].num, cases[i].fmt, got)
+		}
+	}
 }

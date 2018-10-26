@@ -3,8 +3,6 @@ package crypto
 import (
 	"crypto/rand"
 	"testing"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 func TestAesEncrypt(t *testing.T) {
@@ -15,7 +13,6 @@ func TestAesEncrypt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	spew.Dump(encrypted)
 	b, err := AesDecrypt(encrypted, key)
 	if string(b) != str {
 		t.Fail()

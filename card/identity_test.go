@@ -7,7 +7,7 @@ import (
 
 func Test_IdentitySingle(t *testing.T) {
 	id := "44522119830409724x"
-	i, err := NewIdentityCard(id)
+	i, err := New(id)
 	if err != nil {
 		t.Fatal(err)
 	}

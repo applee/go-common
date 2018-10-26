@@ -1,14 +1,10 @@
-#身份证校验工具
+# China identify card utils
 
 ## Usage
 
 ````
-i, err := NewIdentityCard("44522119830409724x")
-//获取年龄
-i.CalcAge()
-//获取归属地
-i.GetAddress()
-//校验合法性
+i, err := card.New("44522119830409724x")
 i.Validate()
-
+i.CalcAge()
+i.GetAddress()
 ````

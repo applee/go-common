@@ -2,35 +2,38 @@ package card
 
 import (
 	"errors"
-	"fmt"
 	"regexp"
 	"strconv"
 	"time"
 )
 
+// The up bound of person age.
 const (
-	AGE_MAX = 120
-
-	ERR_IDENTITY_FORMAT_INVALID   = "身份证号格式不正确"
-	ERR_IDENTITY_LENGTH_INVALID   = "身份证长度错误"
-	ERR_IDENTITY_AGE_INVALID      = "身份证年龄不合法(0-%d岁之间)"
-	ERR_IDENTITY_CHECKSUM_INVALID = "身份证校验位不正确"
+	MaxAge = 256
 )
 
-//IdentityCard 身份证对象
+// Define errors
+var (
+	ErrInvalidFormat   = errors.New("invalid format of China identity card")
+	ErrInvalidLength   = errors.New("invalid length of China identity card")
+	ErrInvalidAge      = errors.New("invalid age(between 0-120)")
+	ErrInvalidCheckSum = errors.New("invalid checksum")
+)
+
+// IdentityCard represents China identity card.
 type IdentityCard struct {
-	Original string //原始
-	Address  string //地址
-	Birthday string //生日
-	Order    string //顺序码
-	Checksum byte   //校验码
+	Original string
+	Address  string
+	Birthday string
+	Order    string
+	Checksum byte
 }
 
-//NewIdentityCard 新建对象
-func NewIdentityCard(s string) (*IdentityCard, error) {
+// New initializes the IdentityCard with given string.
+func New(s string) (*IdentityCard, error) {
 	e := regexp.MustCompile("(^\\d{15}$)|(^\\d{17}(\\d|X|x)$)")
 	if !e.Match([]byte(s)) {
-		return nil, errors.New(ERR_IDENTITY_FORMAT_INVALID)
+		return nil, ErrInvalidFormat
 	}
 	i := &IdentityCard{
 		Original: s,
@@ -50,7 +53,7 @@ func NewIdentityCard(s string) (*IdentityCard, error) {
 	return i, nil
 }
 
-//CalcAge 计算年龄
+// CalcAge calculates the real age.
 func (i *IdentityCard) CalcAge(t *time.Time) (age int) {
 	birthday, err := time.Parse("20060102", i.Birthday)
 	if err != nil {
@@ -67,7 +70,7 @@ func (i *IdentityCard) CalcAge(t *time.Time) (age int) {
 	return
 }
 
-//CalcChecksum 计算验证码
+// CalcChecksum calculate the checksum number.
 func (i *IdentityCard) CalcChecksum() byte {
 	var sum int
 	s := i.Original
@@ -80,7 +83,7 @@ func (i *IdentityCard) CalcChecksum() byte {
 	return IdentifyChecksums[sum%11]
 }
 
-//Validate 验证
+// Validate checks the card number.
 func (i *IdentityCard) Validate() (ok bool, err error) {
 	ok, err = i.ValidateProvince()
 	if !ok {
@@ -94,36 +97,36 @@ func (i *IdentityCard) Validate() (ok bool, err error) {
 	return
 }
 
-//ValidateProvince 验证省份
+// ValidateProvince checks the province.
 func (i *IdentityCard) ValidateProvince() (ok bool, err error) {
 	_, ok = IdentityCardProvince[i.Address[:2]]
 	return
 }
 
-//ValidateAge 验证年龄
+// ValidateAge checks the age.
 func (i *IdentityCard) ValidateAge() (ok bool, err error) {
 	age := i.CalcAge(nil)
-	if age < 0 || age > AGE_MAX {
-		return false, fmt.Errorf(ERR_IDENTITY_AGE_INVALID, AGE_MAX)
+	if age < 0 || age > MaxAge {
+		return false, ErrInvalidAge
 	}
 	return true, nil
 }
 
-//ValidateChecksum 验证校验码
+// ValidateChecksum checks the checksum number.
 func (i *IdentityCard) ValidateChecksum() (bool, error) {
 	if i.CalcChecksum() != i.Checksum {
-		return false, errors.New(ERR_IDENTITY_CHECKSUM_INVALID)
+		return false, ErrInvalidCheckSum
 	}
 	return true, nil
 }
 
-//GetAddress 获取身份证归属地
+// GetAddress get address name.
 func (i *IdentityCard) GetAddress() string {
 	province := IdentityCardProvince[i.Address[:2]]
 	cityCode, _ := strconv.Atoi(i.Address[:6])
 	city := IdentityAddress[cityCode]
 	if city == "" {
-		city = "未知"
+		city = "Unknown"
 	}
 	return province + "/" + city
 }
